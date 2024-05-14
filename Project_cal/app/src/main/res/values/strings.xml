@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Project_cal</string>
+    <string name="input_a">Số A</string>
+    <string name="input_b">Số B</string>
+    <string name="result">Kết quả</string>
+    <string name="a_div_b">A / B</string>
+    <string name="a_times_b">A * B</string>
+    <string name="a_minus_b">A - B</string>
+    <string name="a_plus_b">A + B</string>
+</resources>
