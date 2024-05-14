@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">B4 Convert Temperature</string>
+    <string name="fahrenheit">Fahrenheit</string>
+    <string name="enter_f">Enter F</string>
+    <string name="celsius">Celsius</string>
+    <string name="convert_to_celsius">Convert to Celsius</string>
+    <string name="convert_to_fahrenheit">Convert to Fahrenheit</string>
+    <string name="clear">Clear</string>
+</resources>

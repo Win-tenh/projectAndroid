@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">B4 BMI  Calculator</string>
+    <string name="bmi_cal_title">Chương trình tính chỉ số BMI</string>
+    <string name="name_label">Nhập tên:</string>
+    <string name="height_label">Chiều cao:</string>
+    <string name="height_input">Nhập chiều cao</string>
+    <string name="name_input">Nhập tên</string>
+    <string name="weight_label">Cân nặng:</string>
+    <string name="weight_input">Nhập cân nặng</string>
+    <string name="bmi_cal_btn">Tính BMI</string>
+    <string name="bmi_label">BMI =</string>
+    <string name="dia_label">Chuẩn đoán:</string>
+</resources>
