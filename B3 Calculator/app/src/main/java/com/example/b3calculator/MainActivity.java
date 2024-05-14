@@ -1,4 +1,4 @@
-package com.example.project_cal;
+package com.example.b3calculator;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;

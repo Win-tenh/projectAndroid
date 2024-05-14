@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Project_cal"
+rootProject.name = "B3 Calculator"
 include(":app")
  

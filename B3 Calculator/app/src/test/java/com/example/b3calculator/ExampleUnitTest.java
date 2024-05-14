@@ -1,4 +1,4 @@
-package com.example.project_cal;
+package com.example.b3calculator;
 
 import org.junit.Test;
 

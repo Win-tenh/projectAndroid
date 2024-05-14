@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Project_cal</string>
+    <string name="app_name">B3 Calculator</string>
     <string name="input_a">Số A</string>
     <string name="input_b">Số B</string>
     <string name="result">Kết quả</string>

@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.project_cal"
+    namespace = "com.example.b3calculator"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.project_cal"
+        applicationId = "com.example.b3calculator"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
