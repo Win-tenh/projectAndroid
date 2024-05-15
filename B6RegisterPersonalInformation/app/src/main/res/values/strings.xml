@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">B6 Register Personal Information</string>
+    <string name="title_app">Thông tin cá nhân</string>
+    <string name="name_title">Họ tên</string>
+    <string name="name_et">Nhập tên...</string>
+    <string name="cmnd_title">CMND</string>
+    <string name="cmnd_et">Nhập CMND...</string>
+    <string name="degree_title">Bằng cấp</string>
+    <string name="interest">Sở thích</string>
+    <string name="addit_infor">Thông tin bổ sung</string>
+    <string name="news_ckb">Đọc báo</string>
+    <string name="book_ckb">Đọc sách</string>
+    <string name="coding_ckb">Đọc coding</string>
+    <string name="send_btn">Gửi thông tin</string>
+    <string name="tc_rbtn">Trung cấp</string>
+    <string name="cd_rbtn">Cao đẳng</string>
+    <string name="dh_rbtn">Đại học</string>
+    <string name="input_addit_in4">Nhập...</string>
+    <string name="exit_title">Câu hỏi</string>
+    <string name="exit_message">Bạn có muốn thoát ứng dụng không?</string>
+</resources>
