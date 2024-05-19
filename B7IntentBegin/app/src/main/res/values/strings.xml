@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">B7 Intent Begin</string>
+    <string name="title_main">This is Main Activity</string>
+    <string name="btn_to_child">Open Child Activity</string>
+    <string name="btn_to_bundle">Open Bundle Activity</string>
+    <string name="title_child">This is Child Activity</string>
+    <string name="btn_to_main">Back Main Activity</string>
+</resources>
