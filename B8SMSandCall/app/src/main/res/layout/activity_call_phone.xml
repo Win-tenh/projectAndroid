@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_height="match_parent"
+    tools:context=".CallPhoneActivity"
+    android:id="@+id/main">
+    <TextView
+        android:text="Input Phone Number"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView"
+        android:textSize="30sp"
+        android:gravity="center"
+        android:textStyle="normal|bold"
+        android:textColor="@android:color/holo_green_dark" />
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp">
+
+        <EditText
+            android:id="@+id/edt_phone_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:autofillHints=""
+            android:contentDescription="TODO"
+            android:ems="10"
+            android:importantForAccessibility="no"
+            android:inputType="textPersonName"
+            android:textSize="40sp"/>
+
+        <ImageButton
+            android:id="@+id/btn_call"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/phone"
+            tools:ignore="SpeakableTextPresentCheck" />
+    </LinearLayout>
+    <Button
+        android:text="Back"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/btn_phone_back"
+        android:textSize="24sp"
+        android:textStyle="normal|bold" />
+</LinearLayout>
