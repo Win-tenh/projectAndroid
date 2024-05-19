@@ -51,8 +51,7 @@ public class BundleTest extends AppCompatActivity {
         btn_toMain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent mainIntent = new Intent(BundleTest.this, MainActivity.class);
-                startActivity(mainIntent);
+                finish();
             }
         });
     }

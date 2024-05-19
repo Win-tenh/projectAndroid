@@ -28,9 +28,7 @@ public class Child extends AppCompatActivity {
         btn_main.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent_main = new Intent(Child.this, MainActivity.class);
-
-                startActivity(intent_main);
+                finish();
             }
         });
     }

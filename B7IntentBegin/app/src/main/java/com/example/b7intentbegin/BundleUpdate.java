@@ -59,8 +59,7 @@ public class BundleUpdate extends AppCompatActivity {
         btn_toMain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                myIntent = new Intent(BundleUpdate.this, MainActivity.class);
-                startActivity(myIntent);
+                finish();
             }
         });
 
