@@ -24,7 +24,6 @@ public class MainActivity extends AppCompatActivity {
     private EditText edt_id, edt_name, edt_size;
     private Button btn_add, btn_update, btn_delete, btn_reset;
     private ListView lv_class;
-    private LinearLayout main;
     private DatabaseHelper db;
     private ArrayAdapter<String> studentAdapter;
     private ArrayList<String> studentList;
@@ -50,17 +49,12 @@ public class MainActivity extends AppCompatActivity {
         btn_delete = findViewById(R.id.btn_delete);
         btn_reset = findViewById(R.id.btn_reset);
         lv_class = findViewById(R.id.lv_class);
-        main = findViewById(R.id.main);
-
-        // không focus vào edit text nào, khi nào nhấn vào mới được sửa
 
         // truyền dữ liệu từ db lên listView
         db = new DatabaseHelper(this);
         studentList = db.getAllStudents();
         studentAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, studentList);
         lv_class.setAdapter(studentAdapter);
-
-        // xử lý sự kiện
 
         // nút thêm student
         btn_add.setOnClickListener(v -> {
@@ -79,7 +73,6 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(this, "Thêm lớp thành công!", Toast.LENGTH_SHORT).show();
                 studentList.add(id + " - " + name + " - " + size);
                 studentAdapter.notifyDataSetChanged();
-
                 // reset edit text
                 reset();
             }
@@ -111,7 +104,6 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(this, "Sửa lớp thành công!", Toast.LENGTH_SHORT).show();
                 studentList.set(position, id + " - " + name + " - " + size);
                 studentAdapter.notifyDataSetChanged();
-
                 // reset edit text
                 reset();
             }
@@ -136,7 +128,6 @@ public class MainActivity extends AppCompatActivity {
             // reset edit text
             reset();
         });
-
         // nút reset
         btn_reset.setOnClickListener(v -> reset());
     }
@@ -160,7 +151,6 @@ public class MainActivity extends AppCompatActivity {
         edt_id.setText("");
         edt_name.setText("");
         edt_size.setText("");
-
     }
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
