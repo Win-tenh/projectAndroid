@@ -1,9 +1,13 @@
 package com.example.b15studentmanagement;
 
+import static com.google.android.material.internal.ViewUtils.hideKeyboard;
+
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -18,8 +22,9 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
 
     private EditText edt_id, edt_name, edt_size;
-    private Button btn_add, btn_update, btn_delete;
+    private Button btn_add, btn_update, btn_delete, btn_reset;
     private ListView lv_class;
+    private LinearLayout main;
     private DatabaseHelper db;
     private ArrayAdapter<String> studentAdapter;
     private ArrayList<String> studentList;
@@ -43,7 +48,9 @@ public class MainActivity extends AppCompatActivity {
         btn_add = findViewById(R.id.btn_add);
         btn_update = findViewById(R.id.btn_update);
         btn_delete = findViewById(R.id.btn_delete);
+        btn_reset = findViewById(R.id.btn_reset);
         lv_class = findViewById(R.id.lv_class);
+        main = findViewById(R.id.main);
 
         // không focus vào edit text nào, khi nào nhấn vào mới được sửa
 
@@ -126,11 +133,15 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "Xóa lớp thành công!", Toast.LENGTH_SHORT).show();
             studentList.remove(position);
             studentAdapter.notifyDataSetChanged();
+            // reset edit text
             reset();
         });
+
+        // nút reset
+        btn_reset.setOnClickListener(v -> reset());
     }
 
-    // validates: mã lớp không được trùng, sĩ số > 0, các trường không được để trống
+    // validates: sĩ số > 0, các trường không được để trống
     public boolean validate(String id, String name, String size) {
         if (id.isEmpty() || name.isEmpty() || size.isEmpty()) {
             Toast.makeText(this, "Hãy nhập đầy đủ thông tin!", Toast.LENGTH_SHORT).show();
@@ -141,13 +152,19 @@ public class MainActivity extends AppCompatActivity {
             edt_size.requestFocus();
             return false;
         }
-
         return true;
     }
 
     public void reset() {
+        edt_id.setEnabled(true);
         edt_id.setText("");
         edt_name.setText("");
         edt_size.setText("");
+
+    }
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        KeyboardUtil.dispatchTouchEvent(this, ev);
+        return super.dispatchTouchEvent(ev);
     }
 }
