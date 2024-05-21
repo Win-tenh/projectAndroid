@@ -1,13 +1,15 @@
 package com.example.b15studentmanagement;
 
-import static com.google.android.material.internal.ViewUtils.hideKeyboard;
-
+import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.MotionEvent;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -16,17 +18,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnTouchListener {
 
     private EditText edt_id, edt_name, edt_size;
-    private Button btn_add, btn_update, btn_delete, btn_reset;
-    private ListView lv_class;
     private DatabaseHelper db;
     private ArrayAdapter<String> studentAdapter;
     private ArrayList<String> studentList;
+    private ArrayList<String> filteredList;
     private int position;
 
     @Override
@@ -44,17 +44,33 @@ public class MainActivity extends AppCompatActivity {
         edt_id = findViewById(R.id.edt_id);
         edt_name = findViewById(R.id.edt_name);
         edt_size = findViewById(R.id.edt_size);
-        btn_add = findViewById(R.id.btn_add);
-        btn_update = findViewById(R.id.btn_update);
-        btn_delete = findViewById(R.id.btn_delete);
-        btn_reset = findViewById(R.id.btn_reset);
-        lv_class = findViewById(R.id.lv_class);
+        Button btn_add = findViewById(R.id.btn_add);
+        Button btn_update = findViewById(R.id.btn_update);
+        Button btn_delete = findViewById(R.id.btn_delete);
+        Button btn_reset = findViewById(R.id.btn_reset);
+        ListView lv_class = findViewById(R.id.lv_class);
 
         // truyền dữ liệu từ db lên listView
         db = new DatabaseHelper(this);
         studentList = db.getAllStudents();
-        studentAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, studentList);
+        filteredList = new ArrayList<>(studentList);
+        studentAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, filteredList);
         lv_class.setAdapter(studentAdapter);
+
+        // nhập mã lớp thì hiện những mã lớp trùng trong listview,
+        // nếu mã lớp không trùng thì hiện toàn bộ listview
+        edt_id.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (edt_id.isEnabled())
+                    filterList(s.toString());
+            }
+        });
 
         // nút thêm student
         btn_add.setOnClickListener(v -> {
@@ -72,6 +88,7 @@ public class MainActivity extends AppCompatActivity {
                 db.addStudent(id, name, size);
                 Toast.makeText(this, "Thêm lớp thành công!", Toast.LENGTH_SHORT).show();
                 studentList.add(id + " - " + name + " - " + size);
+                filteredList.add(id + " - " + name + " - " + size);
                 studentAdapter.notifyDataSetChanged();
                 // reset edit text
                 reset();
@@ -82,10 +99,10 @@ public class MainActivity extends AppCompatActivity {
         lv_class.setOnItemClickListener((parent, view, position, id) -> {
             this.position = position;
             String[] student = studentList.get(position).split(" - ");
+            edt_id.setEnabled(false);
             edt_id.setText(student[0]);
             edt_name.setText(student[1]);
             edt_size.setText(student[2]);
-            edt_id.setEnabled(false);
         });
 
         // nút sửa student
@@ -103,6 +120,7 @@ public class MainActivity extends AppCompatActivity {
                 db.updateStudent(id, name, size);
                 Toast.makeText(this, "Sửa lớp thành công!", Toast.LENGTH_SHORT).show();
                 studentList.set(position, id + " - " + name + " - " + size);
+                filteredList.set(position, id + " - " + name + " - " + size);
                 studentAdapter.notifyDataSetChanged();
                 // reset edit text
                 reset();
@@ -124,12 +142,17 @@ public class MainActivity extends AppCompatActivity {
             db.deleteStudent(id);
             Toast.makeText(this, "Xóa lớp thành công!", Toast.LENGTH_SHORT).show();
             studentList.remove(position);
+            filteredList.remove(position);
             studentAdapter.notifyDataSetChanged();
             // reset edit text
             reset();
         });
+
         // nút reset
         btn_reset.setOnClickListener(v -> reset());
+
+        // hide keyboard
+        findViewById(R.id.main).setOnTouchListener(this);
     }
 
     // validates: sĩ số > 0, các trường không được để trống
@@ -137,8 +160,7 @@ public class MainActivity extends AppCompatActivity {
         if (id.isEmpty() || name.isEmpty() || size.isEmpty()) {
             Toast.makeText(this, "Hãy nhập đầy đủ thông tin!", Toast.LENGTH_SHORT).show();
             return false;
-        }
-        if (Integer.parseInt(size) <= 0) {
+        } else if (Integer.parseInt(size) <= 0) {
             Toast.makeText(this, "Sĩ số phải lớn hơn 0!", Toast.LENGTH_SHORT).show();
             edt_size.requestFocus();
             return false;
@@ -146,20 +168,46 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    // lọc dữ liệu
+    public void filterList(String id) {
+        filteredList.clear();
+        if (!id.isEmpty()) {
+            for (String students : studentList) {
+                String[] student = students.split(" - ");
+                String idStudent = student[0];
+                if (idStudent.toLowerCase().contains(id.toLowerCase())) {
+                    filteredList.add(students);
+                }
+            }
+        } else {
+            studentAdapter.clear();
+            studentAdapter.addAll(studentList);
+        }
+        studentAdapter.notifyDataSetChanged();
+    }
+
+    // làm trống các edit text
     public void reset() {
         edt_id.setEnabled(true);
         edt_id.setText("");
         edt_name.setText("");
         edt_size.setText("");
 
-    }
-    // xử lý sự kiện touch
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
-        KeyboardUtil.dispatchTouchEvent(this, ev);
         edt_id.clearFocus();
         edt_name.clearFocus();
         edt_size.clearFocus();
-        return super.dispatchTouchEvent(ev);
+
     }
+
+    @SuppressLint("ClickableViewAccessibility")
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+        edt_id.clearFocus();
+        edt_name.clearFocus();
+        edt_size.clearFocus();
+        return false;
+    }
+
 }
