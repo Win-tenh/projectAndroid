@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">B15 Student Management</string>
+    <string name="btn_delete">Xóa</string>
+    <string name="btn_edit">Sửa</string>
+    <string name="btn_add">Thêm</string>
+    <string name="edt_size_class">Nhập sĩ số lớp</string>
+    <string name="label_size">Sĩ số</string>
+    <string name="edt_name">Nhập tên lớp</string>
+    <string name="label_name">Tên lớp</string>
+    <string name="edit_id">Nhập mã lớp</string>
+    <string name="label_id">Mã lớp</string>
+    <string name="title_app">Quản lý sinh viên</string>
+</resources>
