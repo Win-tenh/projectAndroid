@@ -151,10 +151,15 @@ public class MainActivity extends AppCompatActivity {
         edt_id.setText("");
         edt_name.setText("");
         edt_size.setText("");
+
     }
+    // xử lý sự kiện touch
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         KeyboardUtil.dispatchTouchEvent(this, ev);
+        edt_id.clearFocus();
+        edt_name.clearFocus();
+        edt_size.clearFocus();
         return super.dispatchTouchEvent(ev);
     }
 }
