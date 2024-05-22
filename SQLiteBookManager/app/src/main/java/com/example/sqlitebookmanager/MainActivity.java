@@ -88,13 +88,11 @@ public class MainActivity extends AppCompatActivity {
     private void loadBooks() {
         // xóa dữ liệu cũ
         bookList.clear();
-
         // truy vấn dữ liệu
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         Cursor cursor = db.query(DatabaseHelper.TABLE_BOOKS,
                 null, null, null,
                 null, null, null);
-
         // con trỏ bản ghi dl
         if (cursor.moveToFirst()) {
             do {
@@ -107,7 +105,6 @@ public class MainActivity extends AppCompatActivity {
                 bookList.add(book(title, author, tags));
             } while (cursor.moveToNext());
         }
-
         cursor.close();
         db.close();
     }
