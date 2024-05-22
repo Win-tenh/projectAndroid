@@ -1,16 +1,13 @@
 package com.example.sqlitebookmanager;
 
-import static androidx.activity.result.contract.ActivityResultContracts.*;
-
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResult;
@@ -26,14 +23,10 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Button btnAddBook;
-    private ListView listViewBooks;
     private DatabaseHelper dbHelper; // thao tác với database
     private ArrayAdapter<String> adapter; // điều phối dữ liệu với view ListView, trả về ArrayList
     private ArrayList<String> bookList;
     private Intent mainIntent;
-    private SQLiteDatabase db;
-    private Cursor cursor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,13 +40,12 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // tham chiếu phần tử giao diện
-        listViewBooks = findViewById(R.id.listViewBooks);
-        btnAddBook = findViewById(R.id.btnAddBook);
+        ListView listViewBooks = findViewById(R.id.listViewBooks);
+        Button btnAddBook = findViewById(R.id.btnAddBook);
 
         btnAddBook.setOnClickListener(v -> {
             mainIntent = new Intent(this, AddBookActivity.class);
             bookARL.launch(mainIntent);
-//            startActivity(mainIntent);
         });
 
         // tham chiếu đến database
@@ -68,6 +60,29 @@ public class MainActivity extends AppCompatActivity {
                 android.R.layout.simple_list_item_1,
                 bookList);
         listViewBooks.setAdapter(adapter);
+
+        listViewBooks.setOnItemLongClickListener((parent, view, position, id) -> {
+            // Lấy id của sách tại vị trí position
+            String bookTitle = bookList.get(position).split(" - ")[0];
+            // Hiển thị dialog để xác nhận xóa sách
+            new AlertDialog
+                    .Builder(MainActivity.this)
+                    .setTitle("Delete Book")
+                    .setMessage("Are you sure you want to delete this book?")
+                    .setPositiveButton("Yes", (dialog, which) -> {
+                        SQLiteDatabase db = dbHelper.getWritableDatabase();
+                        db.delete(DatabaseHelper.TABLE_BOOKS,
+                                DatabaseHelper.COLUMN_TITLE + " = ?",
+                                new String[]{bookTitle}
+                        );
+                        db.close();
+                        bookList.remove(position);
+                        adapter.notifyDataSetChanged();
+                    })
+                    .setNeutralButton("No", null)
+                    .show();
+            return true;
+        });
     }
 
     private void loadBooks() {
@@ -75,16 +90,14 @@ public class MainActivity extends AppCompatActivity {
         bookList.clear();
 
         // truy vấn dữ liệu
-        db = dbHelper.getReadableDatabase();
-        cursor = db.query(DatabaseHelper.TABLE_BOOKS,
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = db.query(DatabaseHelper.TABLE_BOOKS,
                 null, null, null,
                 null, null, null);
 
         // con trỏ bản ghi dl
         if (cursor.moveToFirst()) {
             do {
-                // getColumnIndexOrThrow: kiểm tra xem cột có tồn tại trong database hay không,
-                // trả về -1 nếu không tồn tại
                 String title = cursor.getString(cursor.getColumnIndexOrThrow(
                         DatabaseHelper.COLUMN_TITLE));
                 String author = cursor.getString(cursor.getColumnIndexOrThrow(
@@ -99,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
         db.close();
     }
 
-    private ActivityResultLauncher bookARL = registerForActivityResult(
+    private final ActivityResultLauncher bookARL = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             new ActivityResultCallback<ActivityResult>() {
                 @Override
