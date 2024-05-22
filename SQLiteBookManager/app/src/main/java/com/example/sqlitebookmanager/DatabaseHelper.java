@@ -1,10 +1,13 @@
 package com.example.sqlitebookmanager;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import androidx.annotation.Nullable;
+
+import java.util.ArrayList;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
@@ -15,6 +18,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_TITLE = "title";
     public static final String COLUMN_AUTHOR = "author";
     public static final String COLUMN_TAGS = "tags"; // Thêm cột tags
+    private SQLiteDatabase db;
+    private ArrayList<String> books;
 
     private static final String TABLE_CREATE =
             "CREATE TABLE " + TABLE_BOOKS + " (" +
@@ -37,5 +42,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_BOOKS);
         onCreate(db);
+    }
+
+    public boolean checkStudent(String title) {
+        db = getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_BOOKS + " WHERE " + COLUMN_TITLE + " = '" + title + "'", null);
+        boolean exists = cursor.getCount() > 0;
+        cursor.close();
+        db.close();
+        return exists;
     }
 }

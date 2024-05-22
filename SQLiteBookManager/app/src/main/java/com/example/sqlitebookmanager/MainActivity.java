@@ -5,6 +5,7 @@ import static androidx.activity.result.contract.ActivityResultContracts.*;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -33,17 +34,6 @@ public class MainActivity extends AppCompatActivity {
     private Intent mainIntent;
     private SQLiteDatabase db;
     private Cursor cursor;
-//    private ActivityResultLauncher ARL = registerForActivityResult(
-//            new ActivityResultContracts.StartActivityForResult(),
-//            new ActivityResultCallback<ActivityResult>() {
-//                @Override
-//                public void onActivityResult(ActivityResult o) {
-//                    if (o.getResultCode() == RESULT_OK) {
-//                        int newId = o.getData().getIntExtra("new_id", 0);
-//                        Toast.makeText(MainActivity.this, "New ID: " + newId, Toast.LENGTH_SHORT).show();
-//                    }
-//                }
-//            });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,8 +52,8 @@ public class MainActivity extends AppCompatActivity {
 
         btnAddBook.setOnClickListener(v -> {
             mainIntent = new Intent(this, AddBookActivity.class);
-//            ARL.launch(mainIntent);
-            startActivity(mainIntent);
+            bookARL.launch(mainIntent);
+//            startActivity(mainIntent);
         });
 
         // tham chiếu đến database
@@ -79,14 +69,6 @@ public class MainActivity extends AppCompatActivity {
                 bookList);
         listViewBooks.setAdapter(adapter);
     }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        loadBooks();
-        adapter.notifyDataSetChanged();
-    }
-
 
     private void loadBooks() {
         // xóa dữ liệu cũ
@@ -116,5 +98,18 @@ public class MainActivity extends AppCompatActivity {
         cursor.close();
         db.close();
     }
+
+    private ActivityResultLauncher bookARL = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult o) {
+                    if (o.getResultCode() == RESULT_OK) {
+                        mainIntent = o.getData();
+                        bookList.add(mainIntent.getStringExtra("book"));
+                        adapter.notifyDataSetChanged();
+                    }
+                }
+            });
 
 }

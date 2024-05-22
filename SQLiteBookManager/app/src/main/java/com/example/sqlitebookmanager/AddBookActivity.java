@@ -1,11 +1,13 @@
 package com.example.sqlitebookmanager;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -16,10 +18,10 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-public class AddBookActivity extends AppCompatActivity {
+public class AddBookActivity extends AppCompatActivity implements View.OnTouchListener {
 
     private EditText editTextTitle, editTextAuthor, editTextTags;
-    private Button buttonAddBook;
+    private Button buttonAddBook, btn_back_main;
     private DatabaseHelper dbHelper;
 
     @Override
@@ -37,9 +39,14 @@ public class AddBookActivity extends AppCompatActivity {
         editTextAuthor = findViewById(R.id.editTextAuthor);
         editTextTags = findViewById(R.id.editTextTags);
         buttonAddBook = findViewById(R.id.buttonAddBook);
+        btn_back_main = findViewById(R.id.btn_back_main);
         dbHelper = new DatabaseHelper(this);
 
-        Intent idIntent = getIntent();
+
+        // hide keyboard
+        findViewById(R.id.main).setOnTouchListener(this);
+
+        Intent returnIntent = getIntent();
 
         buttonAddBook.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -51,7 +58,10 @@ public class AddBookActivity extends AppCompatActivity {
                 // Kiểm tra nếu EditText rỗng
                 if (title.isEmpty() || author.isEmpty() || tags.isEmpty()) {
                     // Thông báo lỗi
-                    Toast.makeText(AddBookActivity.this, "Điền vào các ô trống!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddBookActivity.this, "Fields cannot be left blank!", Toast.LENGTH_SHORT).show();
+                    return;
+                } else if (dbHelper.checkStudent(title)) {
+                    Toast.makeText(AddBookActivity.this, "Title already exists ", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -64,18 +74,28 @@ public class AddBookActivity extends AppCompatActivity {
                 long newId = db.insert(DatabaseHelper.TABLE_BOOKS, null, values);
                 db.close();
 
-                // truyền id mới thêm cho ListView
-//                idIntent.putExtra("new_id", newId);
-//                setResult(RESULT_OK, idIntent);
+                String newRow = title + " - " + author + " - " + tags;
+                returnIntent.putExtra("book", newRow);
+                setResult(RESULT_OK, returnIntent);
+
+                // thông báo thành công
+                Toast.makeText(AddBookActivity.this, "Book added successfully", Toast.LENGTH_SHORT).show();
                 // kết thúc activity
                 finish();
             }
         });
+
+        btn_back_main.setOnClickListener(v -> finish());
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
-        KeyboardUtil.dispatchTouchEvent(this, ev);
-        return super.dispatchTouchEvent(ev);
+    public boolean onTouch(View v, MotionEvent event) {
+        InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+        editTextTitle.clearFocus();
+        editTextAuthor.clearFocus();
+        editTextTags.clearFocus();
+        return false;
     }
 }

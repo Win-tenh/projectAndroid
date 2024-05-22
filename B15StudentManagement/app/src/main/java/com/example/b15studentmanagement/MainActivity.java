@@ -20,7 +20,8 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity implements View.OnTouchListener {
+public class MainActivity extends AppCompatActivity
+        implements View.OnTouchListener {
 
     private EditText edt_id, edt_name, edt_size;
     private DatabaseHelper db;
@@ -209,5 +210,4 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         edt_size.clearFocus();
         return false;
     }
-
 }
