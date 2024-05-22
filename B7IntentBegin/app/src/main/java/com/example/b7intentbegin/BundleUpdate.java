@@ -21,7 +21,6 @@ public class BundleUpdate extends AppCompatActivity {
     private EditText a_et, b_et, result_et;
     private Button btn_toResult, btn_toMain;
     private Intent myIntent;
-
     private ActivityResultLauncher ARL = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             new ActivityResultCallback<ActivityResult>() {
