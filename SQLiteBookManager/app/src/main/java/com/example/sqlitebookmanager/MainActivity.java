@@ -104,12 +104,17 @@ public class MainActivity extends AppCompatActivity {
                         DatabaseHelper.COLUMN_AUTHOR));
                 String tags = cursor.getString(cursor.getColumnIndexOrThrow(
                         DatabaseHelper.COLUMN_TAGS));
-                bookList.add(title + " - " + author + " - " + tags);
+                bookList.add(book(title, author, tags));
             } while (cursor.moveToNext());
         }
 
         cursor.close();
         db.close();
+    }
+
+    // hàm trả về kiểu String khi add vào ListView
+    public String book(String title, String author, String tags) {
+        return title + " - " + author + " - " + tags;
     }
 
     private final ActivityResultLauncher bookARL = registerForActivityResult(
@@ -119,7 +124,13 @@ public class MainActivity extends AppCompatActivity {
                 public void onActivityResult(ActivityResult o) {
                     if (o.getResultCode() == RESULT_OK) {
                         mainIntent = o.getData();
-                        bookList.add(mainIntent.getStringExtra("book"));
+                        // thêm dữ liệu vào ArrayList
+                        String title = mainIntent.getStringExtra("title");
+                        String author = mainIntent.getStringExtra("author");
+                        String tags = mainIntent.getStringExtra("tags");
+                        String book = book(title, author, tags);
+                        bookList.add(book);
+                        // cập nhật dữ liệu vào ListView
                         adapter.notifyDataSetChanged();
                     }
                 }

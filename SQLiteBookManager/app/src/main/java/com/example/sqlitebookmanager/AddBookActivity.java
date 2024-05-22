@@ -74,8 +74,9 @@ public class AddBookActivity extends AppCompatActivity implements View.OnTouchLi
                 long newId = db.insert(DatabaseHelper.TABLE_BOOKS, null, values);
                 db.close();
 
-                String newRow = title + " - " + author + " - " + tags;
-                returnIntent.putExtra("book", newRow);
+                returnIntent.putExtra("title", title);
+                returnIntent.putExtra("author", author);
+                returnIntent.putExtra("tags", tags);
                 setResult(RESULT_OK, returnIntent);
 
                 // thông báo thành công
