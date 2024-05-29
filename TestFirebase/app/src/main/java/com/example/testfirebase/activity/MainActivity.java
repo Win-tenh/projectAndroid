@@ -1,7 +1,7 @@
 package com.example.testfirebase.activity;
 
+
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
@@ -32,8 +32,6 @@ import java.util.Collections;
 public class MainActivity extends AppCompatActivity implements View.OnTouchListener {
 
     private EditText et_name, et_email;
-    private Button btn_add, btn_update, btn_delete;
-    private ListView lv_students;
     private ArrayList<Student> studentList;
     private FirebaseDatabaseHelper dbHelper;
     private StudentAdapter studentAdapter;
@@ -53,10 +51,10 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         // tham chiếu đến các view trong layout
         et_name = findViewById(R.id.et_name);
         et_email = findViewById(R.id.et_email);
-        btn_add = findViewById(R.id.btn_add);
-        btn_update = findViewById(R.id.btn_update);
-        btn_delete = findViewById(R.id.btn_delete);
-        lv_students = findViewById(R.id.lv_students);
+        Button btn_add = findViewById(R.id.btn_add);
+        Button btn_update = findViewById(R.id.btn_update);
+        Button btn_delete = findViewById(R.id.btn_delete);
+        ListView lv_students = findViewById(R.id.lv_students);
 
         // khởi tạo list
         studentList = new ArrayList<>();
@@ -222,6 +220,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
