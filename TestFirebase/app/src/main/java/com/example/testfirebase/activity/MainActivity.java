@@ -1,11 +1,14 @@
 package com.example.testfirebase.activity;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.os.Bundle;
-import android.widget.ArrayAdapter;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -15,6 +18,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.testfirebase.adapter.StudentAdapter;
 import com.example.testfirebase.repository.FirebaseDatabaseHelper;
 import com.example.testfirebase.R;
 import com.example.testfirebase.model.Student;
@@ -23,16 +27,17 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnTouchListener {
 
     private EditText et_name, et_email;
     private Button btn_add, btn_update, btn_delete;
     private ListView lv_students;
-    private List<Student> studentList;
+    private ArrayList<Student> studentList;
     private FirebaseDatabaseHelper dbHelper;
-    private ArrayAdapter<String> studentAdapter;
+    private StudentAdapter studentAdapter;
+    private int position = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +51,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // tham chiếu đến các view trong layout
-        TextView tvMessage = findViewById(R.id.tv_message);
         et_name = findViewById(R.id.et_name);
         et_email = findViewById(R.id.et_email);
         btn_add = findViewById(R.id.btn_add);
@@ -56,30 +60,29 @@ public class MainActivity extends AppCompatActivity {
 
         // khởi tạo list
         studentList = new ArrayList<>();
-        studentAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, studentList);
+        studentAdapter = new StudentAdapter(this, studentList);
         lv_students.setAdapter(studentAdapter);
         dbHelper = new FirebaseDatabaseHelper();
+
         // đọc dữ liệu từ firebase
         loadStudents();
 
         // thêm sinh viên
-        btn_add.setOnClickListener(v -> { addStudent(); });
+        btn_add.setOnClickListener(v -> addStudent());
 
         // cập nhật sinh viên
-        btn_update.setOnClickListener(v -> { updateStudent(); });
+        btn_update.setOnClickListener(v -> updateStudent());
 
         // xóa sinh viên
-        btn_delete.setOnClickListener(v -> { deleteStudent(); });
+        btn_delete.setOnClickListener(v -> deleteStudent());
 
         // click vào item trong listview
         lv_students.setOnItemClickListener((parent, view, position, id) -> {
-//            String name = studentList.get(position).getName();
-//            String email = studentList.get(position).getEmail();
-//            et_name.setText(name);
-//            et_email.setText(email);
-
+            Student student = studentList.get(position);
+            et_name.setText(student.getName());
+            et_email.setText(student.getEmail());
+            this.position = position;
         });
-
     }
 
     private void loadStudents() {
@@ -95,63 +98,136 @@ public class MainActivity extends AppCompatActivity {
                     Student student = new Student(id, name, email);
                     studentList.add(student);
                 }
+                // đảo ngược thứ tự student trong studentList
+                Collections.reverse(studentList);
+                // cập nhật dữ liệu vào adapter
                 studentAdapter.notifyDataSetChanged();
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(MainActivity.this, "Failed to read value.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this,
+                        "Failed to read value.",
+                        Toast.LENGTH_SHORT).show();
             }
         });
+
+        // hide keyboard
+        findViewById(R.id.main).setOnTouchListener(this);
     }
 
     private void deleteStudent() {
-        String id = dbHelper.getRef().push().getKey();
+        if (validatePosition()) return;
+        else if (!validateExists()) {
+            Toast.makeText(this,
+                    "Student is not exists",
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
+        // lấy id trong studentList
+        String id = studentList.get(position).getId();
         dbHelper.deleteStudent(id);
-        et_name.setText("");
-        et_email.setText("");
+        // clear dữ liệu trong form
+        clearActivity("Student is deleted");
     }
 
     private void updateStudent() {
+        if (validatePosition()) return;
+        else if (validate()) return;
+
+        String id = studentList.get(position).getId();
         String name = et_name.getText().toString();
         String email = et_email.getText().toString();
-        String id = dbHelper.getRef().push().getKey();
         Student student = new Student(id, name, email);
-        dbHelper.updateStudent(id,student);
-        et_name.setText("");
-        et_email.setText("");
+        dbHelper.updateStudent(id, student);
+
+        clearActivity("Student is updated");
     }
 
     private void addStudent() {
+        if (validate()) return;
         String name = et_name.getText().toString();
         String email = et_email.getText().toString();
         String id = dbHelper.getRef().push().getKey();
         Student student = new Student(id, name, email);
         dbHelper.addStudent(student);
-        et_name.setText("");
-        et_email.setText("");
+        // clear dữ liệu trong form
+        clearActivity("Student is added");
     }
 
-    //        // write database (firebase)
-//        String databaseUrl = "https://test-firebase-ecfde-default-rtdb.asia-southeast1.firebasedatabase.app/";
-//        FirebaseDatabase database = FirebaseDatabase.getInstance(databaseUrl);
-//
-//        DatabaseReference myRef = database.getReference("message");
-//        myRef.setValue("Hello, World!")
-//                .addOnSuccessListener(aVoid -> tvMessage.setText("Success"))
-//                .addOnFailureListener(e -> tvMessage.setText("Failed"));
-//
-//        // read database (firebase)
-//        myRef.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                String value = snapshot.getValue(String.class);
-//                tvMessage.setText(value);
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError error) {
-//                Log.w("MainActivity", "Failed to read value.", error.toException());
-//            }
-//        });
+    // validate dữ liệu của form
+    private boolean validate() {
+        // kiểm tra et_name có trống không
+        if (et_name.getText().toString().isEmpty()) {
+            et_name.setError("Name is required");
+            Toast.makeText(this, "Name is required", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        // kiểm tra et_email có trống không
+        if (et_email.getText().toString().isEmpty()) {
+            et_email.setError("Email is required");
+            Toast.makeText(this, "Email is required", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        // kiểm tra et_email có đúng định dạng không
+        if (!android.util.Patterns.EMAIL_ADDRESS.
+                matcher(et_email.getText().toString()).matches()) {
+            et_email.setError("Email is invalid");
+            Toast.makeText(this, "Email is invalid", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        // kiểm tra email có bị trùng trong studentList không
+        for (Student student : studentList) {
+            if (student.getEmail().
+                    equals(et_email.getText().toString().trim())) {
+                et_email.setError("Email is already exists");
+                Toast.makeText(this, "Email is already exists", Toast.LENGTH_SHORT).show();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean validatePosition() {
+        if (position == -1) {
+            Toast.makeText(this,
+                    "Please select a student",
+                    Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        return false;
+    }
+    // kiểm tra dữ liệu từ name và email có trong studentList không
+    public boolean validateExists() {
+        String name = et_name.getText().toString();
+        String email = et_email.getText().toString();
+
+        for (Student student : studentList)
+            if (student.getName().equals(name) &&
+                    student.getEmail().equals(email)) {
+                return true;
+            }
+        return false;
+    }
+
+    // clear dữ liệu trong form
+    public void clearActivity(String toast) {
+        et_name.setText("");
+        et_email.setText("");
+        et_name.clearFocus();
+        et_email.clearFocus();
+        position = -1;
+        if (toast != null) {
+            Toast.makeText(this, toast, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+        et_name.clearFocus();
+        et_email.clearFocus();
+        return false;
+    }
 }
