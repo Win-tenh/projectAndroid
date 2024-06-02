@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.b10intentfilter"
+    namespace = "com.example.b10intentfilter2"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.b10intentfilter"
+        applicationId = "com.example.b10intentfilter2"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
