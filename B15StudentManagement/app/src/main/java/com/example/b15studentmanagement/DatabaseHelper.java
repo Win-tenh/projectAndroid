@@ -68,6 +68,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // thêm sinh viên vào cơ sở dữ liệu
     public void addStudent(String id, String name, String size) {
         db = getWritableDatabase();
+        // thay bằng db.insert
         db.execSQL("INSERT INTO " + TABLE_STUDENTS + " VALUES ('" + id + "', '" + name + "', '" + size + "');");
         db.close();
     }
