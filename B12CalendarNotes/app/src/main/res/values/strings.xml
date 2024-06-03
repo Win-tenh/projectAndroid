@@ -3,8 +3,8 @@
     <string name="name_app">Calender Notes</string>
     <string name="time_now">TextView</string>
     <string name="hint_enterWork">Enter work here</string>
-    <string name="hour_title">Hour</string>
-    <string name="minute_title">Minute</string>
+    <string name="hour_title">Hour:</string>
+    <string name="minute_title">Minute:</string>
     <string name="enter_hour_hint">Enter hour</string>
     <string name="enter_minute_hint">Enter minute</string>
     <string name="add_work_btn">Add Work</string>
