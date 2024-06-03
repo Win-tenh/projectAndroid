@@ -10,4 +10,5 @@
     <string name="edit_id">Nhập mã lớp</string>
     <string name="label_id">Mã lớp</string>
     <string name="title_app">Quản lý sinh viên</string>
+    <string name="btn_null_title">Làm trống</string>
 </resources>

@@ -86,13 +86,18 @@ public class MainActivity extends AppCompatActivity
                     return;
                 }
                 // thêm student
-                db.addStudent(id, name, size);
-                Toast.makeText(this, "Thêm lớp thành công!", Toast.LENGTH_SHORT).show();
-                studentList.add(id + " - " + name + " - " + size);
-                filteredList.add(id + " - " + name + " - " + size);
-                studentAdapter.notifyDataSetChanged();
-                // reset edit text
-                reset();
+                Long idStudent = db.addStudent(id, name, size);
+                if (idStudent == -1) {
+                    Toast.makeText(this, "Thêm lớp thất bại!", Toast.LENGTH_SHORT).show();
+                    return;
+                } else {
+                    Toast.makeText(this, "Thêm lớp thành công!", Toast.LENGTH_SHORT).show();
+                    studentList.add(id + " - " + name + " - " + size);
+                    filteredList.add(id + " - " + name + " - " + size);
+                    studentAdapter.notifyDataSetChanged();
+                    // reset edit text
+                    reset();
+                }
             }
         });
 
@@ -118,7 +123,11 @@ public class MainActivity extends AppCompatActivity
                     return;
                 }
                 // sửa student
-                db.updateStudent(id, name, size);
+                int result = db.updateStudent(id, name, size);
+                if (result == -1) {
+                    Toast.makeText(this, "Sửa lớp thất bại!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 Toast.makeText(this, "Sửa lớp thành công!", Toast.LENGTH_SHORT).show();
                 studentList.set(position, id + " - " + name + " - " + size);
                 filteredList.set(position, id + " - " + name + " - " + size);
@@ -140,7 +149,11 @@ public class MainActivity extends AppCompatActivity
                 return;
             }
             // xóa student
-            db.deleteStudent(id);
+            int result = db.deleteStudent(id);
+            if (result == -1) {
+                Toast.makeText(this, "Xóa lớp thất bại!", Toast.LENGTH_SHORT).show();
+                return;
+            }
             Toast.makeText(this, "Xóa lớp thành công!", Toast.LENGTH_SHORT).show();
             studentList.remove(position);
             filteredList.remove(position);

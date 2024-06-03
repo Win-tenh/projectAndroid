@@ -1,5 +1,6 @@
 package com.example.b15studentmanagement;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -41,7 +42,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // lấy danh sách sinh viên và trả về ArrayList<String>
     public ArrayList<String> getAllStudents() {
         students = new ArrayList<>();
-
         db = getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_STUDENTS, null);
         while (cursor.moveToNext()) {
@@ -55,7 +55,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return students;
     }
 
-    // kiểm tra xem sinh viên có tồn tại trong cơ sở dữ liệu hay không
+    // kiểm tra xem sinh viên có tồn tại không
     public boolean checkStudent(String id) {
         db = getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_STUDENTS + " WHERE " + COLUMN_ID + " = '" + id + "'", null);
@@ -65,24 +65,31 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return exists;
     }
 
-    // thêm sinh viên vào cơ sở dữ liệu
-    public void addStudent(String id, String name, String size) {
+    public long addStudent(String id, String name, String size) {
         db = getWritableDatabase();
-        // thay bằng db.insert
-        db.execSQL("INSERT INTO " + TABLE_STUDENTS + " VALUES ('" + id + "', '" + name + "', '" + size + "');");
+        ContentValues cv = new ContentValues();
+        cv.put(COLUMN_ID, id);
+        cv.put(COLUMN_NAME, name);
+        cv.put(COLUMN_SIZE, size);
+        long result = db.insert(TABLE_STUDENTS, null, cv);
         db.close();
+        return result;
     }
 
-    // cập nhật thông tin sinh viên
-    public void updateStudent(String id, String name, String size) {
+    public int updateStudent(String id, String name, String size) {
         db = getWritableDatabase();
-        db.execSQL("UPDATE " + TABLE_STUDENTS + " SET " + COLUMN_NAME + " = '" + name + "', " + COLUMN_SIZE + " = '" + size + "' WHERE " + COLUMN_ID + " = '" + id + "';");
+        ContentValues cv = new ContentValues();
+        cv.put(COLUMN_NAME, name);
+        cv.put(COLUMN_SIZE, size);
+        int result = db.update(TABLE_STUDENTS, cv, COLUMN_ID+"=?", new String[]{id});
         db.close();
+        return result;
     }
 
-    // xóa sinh viên khỏi cơ sở dữ liệu
-    public void deleteStudent(String id) {
+    public int deleteStudent(String id) {
         db = getWritableDatabase();
-        db.execSQL("DELETE FROM " + TABLE_STUDENTS + " WHERE " + COLUMN_ID + " = '" + id + "';");
+        int result = db.delete(TABLE_STUDENTS, COLUMN_ID+ "=?", new String[]{id});
+        db.close();
+        return result;
     }
 }
